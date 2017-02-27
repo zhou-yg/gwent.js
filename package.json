@@ -1,0 +1,25 @@
+{
+  "name": "gwent.js",
+  "version": "0.0.1",
+  "description": "a realtime framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "''"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhou-yg/gwent.js.git"
+  },
+  "keywords": [
+    "realtime",
+    "game",
+    "web",
+    "nodejs"
+  ],
+  "author": "zhou-yg",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/zhou-yg/gwent.js/issues"
+  },
+  "homepage": "https://github.com/zhou-yg/gwent.js#readme"
+}
