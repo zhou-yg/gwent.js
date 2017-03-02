@@ -2,7 +2,8 @@
  * Created by zyg on 17/3/2.
  */
 import {
-  TEST
+  TEST,
+  TEST2
 } from './types'
 
 function struct(handler,defaultState) {
@@ -25,6 +26,9 @@ function struct(handler,defaultState) {
 const reducer = {
   [TEST](state,a){
     return state + a.value;
+  },
+  [TEST2](state,a){
+    return state - a.value;
   }
 }
 
