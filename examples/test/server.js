@@ -18,6 +18,9 @@ const webpackConfig = {
     publicPath:'/',
     filename:'[name].js'
   },
+  resolve:{
+    extensions:['.js']
+  },
   module:{
     rules:[
       {

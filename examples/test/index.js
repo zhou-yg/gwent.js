@@ -1,3 +1,7 @@
-require('./store/store.js');
+import store from './store/store'
 
-console.log('ab')
+window.S = store;
+
+store.subscribe(()=>{
+  console.log(store.getState())
+});
