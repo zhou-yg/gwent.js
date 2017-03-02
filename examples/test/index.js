@@ -8,11 +8,10 @@ store.subscribe(()=>{
 
 
 window.add1 = function(){
-  
-  
-  
+
   store.dispatch({
     type:TEST,
+    from:'browser',
     value:2,
     
   })
@@ -20,8 +19,8 @@ window.add1 = function(){
 window.reduce1 = function (){
   store.dispatch({
     type:TEST2,
+    from:'browser',
     value:1,
-
   })
   
 }
