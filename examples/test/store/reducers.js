@@ -1,10 +1,7 @@
 /**
  * Created by zyg on 17/3/2.
  */
-import {
-  TEST,
-  TEST2
-} from './types'
+const types = require('./types');
 
 function struct(handler,defaultState) {
 
@@ -24,12 +21,12 @@ function struct(handler,defaultState) {
 
 
 const reducer = {
-  [TEST](state,a){
+  [types.TEST](state,a){
     return state + a.value;
   },
-  [TEST2](state,a){
+  [types.TEST2](state,a){
     return state - a.value;
   }
 }
 
-export default struct(reducer,0);
+module.exports = struct(reducer,0);

@@ -1,10 +1,19 @@
 /**
  * Created by zyg on 17/3/2.
  */
-export default actionRouter = ({dispatch,getStore}) => next => action {
+module.exports = (socket) => (store) => (next) => action => {
 
-  if(action.browser){
+  console.log(action);
+
+  if(action.from === 'browser'){
     //....send to server
+
+    socket.emit(action.type,JSON.stringify(action));
+    
+
+    return
   }
+
+
   return next(action);
 }

@@ -1,5 +1,8 @@
-import store from './store/store'
+import createStore from './store/store'
 import { TEST,TEST2 } from './store/types'
+
+const store = createStore(io());
+
 window.S = store;
 
 store.subscribe(()=>{
