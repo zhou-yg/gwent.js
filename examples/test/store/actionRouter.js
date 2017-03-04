@@ -7,13 +7,25 @@ module.exports = (socket) => (store) => (next) => action => {
 
   if(action.from === 'browser'){
     //....send to server
+    delete action.from;
 
-    socket.emit(action.type,JSON.stringify(action));
-    
+    socket.emit(action.type,action);
 
-    return
+    return;
+  }else if(action.from === 'server'){
+
+    delete action.from;
+
+    console.log('actionRouter');
+
+    return new Promise((resolve)=>{
+
+      socket.emit(action.type,action);
+
+      resolve();
+    });
   }
 
 
   return next(action);
-}
+};

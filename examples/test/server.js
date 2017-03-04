@@ -86,13 +86,15 @@ app.io.use(function * (next){
   console.log('connect');
 
   try{
-    this.store = createStore(this);
+    this.store = createStore(this.socket);
     const unsub = this.store.subscribe(()=>{
 
       console.log(store.getState());
+
+
     });
   }catch(e){
-    console.log(e);
+    console.log('e:',e);
   }
 
   console.log('connect2');
@@ -108,9 +110,12 @@ app.io.route('testx' , function * (next,action) {
 
   console.log(action);
 
-  action.type = 'node';
+  action.from = 'server';
   
-  this.store.dispatch(action);
+  this.store.dispatch(action).then(res=>{
+
+    console.log('resolved');
+  });
 });
 
 app.io.route('test2' , function * (next,action) {
