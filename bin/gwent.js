@@ -7,6 +7,14 @@ const types = require('./types');
 const actionRedirect = require('./actionRedirect');
 const receiveSocket = require('./receiveSocket');
 
+var workId = process.env.UNIQUE_ID || 0;
+workId = Number(workId);
+if(isNaN(workId)){
+  workId = 0;
+}
+
+shortid.worker(workId);
+
 function Gwent(options){
 
   if(!(this instanceof Gwent)){
@@ -24,7 +32,6 @@ function Gwent(options){
 
       this.store = createStore(this.socket);
 
-      this.socketId = shortid.generate();
 
       const unSubscribe = this.store.subscribe(()=> {
 
@@ -38,7 +45,7 @@ function Gwent(options){
       onDisconnect.call(this);
 
       unSubscribe();
-    
+
   });
 
   app.io.route(types.SOCKET_ROUTE, function * (next,action){
