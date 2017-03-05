@@ -8,7 +8,7 @@ const store = createStore(socket);
 window.S = store;
 
 store.subscribe(()=>{
-  console.log(store.getState())
+  console.log('state:',store.getState())
 });
 
 socket.on('testx',(m)=>{

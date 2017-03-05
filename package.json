@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "",
-    "example": "cd examples/test && node server.js"
+    "example": "cd examples/test && node server.js",
+    "example2": "cd examples/gwent && node server.js"
   },
   "repository": {
     "type": "git",

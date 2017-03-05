@@ -6,8 +6,7 @@ const applyMiddleware = redux.applyMiddleware;
 
 const reducers = require('./reducers');
 
-const actionRouter = require('./actionRouter');
-
+const tools = require('../../../tools');
 
 const testMiddleware = (store) => next => action => {
 
@@ -18,12 +17,13 @@ const testMiddleware = (store) => next => action => {
 
 module.exports = function createMyStore(socket) {
 
-  console.log(socket.socket && socket.socket.on);
+  console.log('socket:',socket.socket && socket.socket.on);
 
   const store = createStore(combineReducers({
     value:reducers
   }),applyMiddleware(
-    actionRouter(socket)
+    tools.receiveSocket(socket),
+    tools.actionRedirect(socket)
   ));
 
 
