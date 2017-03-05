@@ -6,7 +6,7 @@ const applyMiddleware = redux.applyMiddleware;
 
 const reducers = require('./reducers');
 
-const tools = require('../../../tools');
+const middlewares = require('../../../middlewares');
 
 const testMiddleware = (store) => next => action => {
 
@@ -22,8 +22,8 @@ module.exports = function createMyStore(socket) {
   const store = createStore(combineReducers({
     value:reducers
   }),applyMiddleware(
-    tools.receiveSocket(socket),
-    tools.actionRedirect(socket)
+    middlewares.receiveSocket(socket),
+    middlewares.actionRedirect(socket)
   ));
 
 
