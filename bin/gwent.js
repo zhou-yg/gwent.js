@@ -29,16 +29,18 @@ function Gwent(options){
 
   app.io.use(function * (next){
 
-
       this.store = createStore(this.socket);
 
+      onConnect.call(this);
 
       const unSubscribe = this.store.subscribe(()=> {
 
-        console.log('getState:', this.store.getState());
-      });
+        console.log(this.socket.id,'server getState:');
 
-      onConnect.call(this);
+        console.log(this.store.lastAction);
+
+        this.socket.emit(types.SOCKET_ROUTE,this.store.lastAction);
+      });
 
       yield next;
 
@@ -50,9 +52,8 @@ function Gwent(options){
 
   app.io.route(types.SOCKET_ROUTE, function * (next,action){
 
-    console.log(action);
-
-    action.from = types.SERVER_TAG;
+    // action.from = types.SERVER_TAG;
+    this.store.lastAction = action;
 
     this.store.dispatch(action);
   });

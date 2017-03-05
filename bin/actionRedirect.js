@@ -18,12 +18,7 @@ module.exports = (socket) => (store) => (next) => action => {
 
     delete action.from;
 
-    return new Promise((resolve)=>{
-
-      socket.emit(types.SOCKET_ROUTE,action);
-
-      resolve();
-    });
+    return;
   }
 
 

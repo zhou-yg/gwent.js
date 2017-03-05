@@ -1,0 +1,35 @@
+#phone{
+  margin:0;
+  border:1px solid;
+  padding: 0;
+  width: 320px;
+  height: 540px;
+
+  position: relative;
+}
+
+#board{
+
+  border-bottom:1px solid;
+
+  .grid-box{
+    display: flex;
+  }
+
+  .grid{
+    background-color: #f0f0f0;
+    border:1px solid #fff;
+    margin-right:-1px;
+    margin-bottom:-1px;
+    height: 50px;
+    flex:1;
+
+    &:last-child{
+      margin-right:0;
+    }
+
+    &.horse{
+      background-color: #80651A;
+    }
+  }
+}
