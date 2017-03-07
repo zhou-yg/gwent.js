@@ -26,6 +26,8 @@
   },
   "homepage": "https://github.com/zhou-yg/gwent.js#readme",
   "dependencies": {
+    "koa": "^2.0.0-alpha.8",
+    "koa-convert": "^1.2.0",
     "koa.io": "0.0.3",
     "redux": "^3.6.0"
   },

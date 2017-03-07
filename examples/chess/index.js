@@ -11,9 +11,45 @@ const store = createStore(socket);
 
 window.S = store;
 
-
+socket.emit('new user');
 
 const boardDOM = document.querySelector('#board');
+
+class UserList {
+
+  constructor(socket){
+
+    this.container = document.querySelector('#userList');
+
+    socket.on('users',(list)=>{
+      console.log('users');
+      this.list = list.map(obj=>{
+
+        return {
+          username:obj.username,
+        }
+      });
+
+      this.render();
+    });
+  }
+
+  render(){
+
+    const frag = this.list.map(obj=>{
+      const li = document.createElement('li');
+      li.innerText = obj.username;
+      return li;
+    }).reduce((frag,li)=>{
+      frag.appendChild(li);
+      return frag;
+    },document.createDocumentFragment());
+
+    this.container.innerHTML = '';
+    this.container.appendChild(frag);
+  }
+}
+
 
 class Horse {
 
@@ -99,6 +135,8 @@ class ChessBoard {
 
 const chessBoard = new ChessBoard();
 
+const userList = new UserList(socket);
+
 store.subscribe(()=>{
 
   chessBoard.index = store.getState().boardIndex;
@@ -111,6 +149,8 @@ store.dispatch({
   horse:new Horse(0,7),
 });
 
+//chessBoard.render(boardDOM)
+
 window.add = function (x){
 
   store.dispatch({
@@ -119,6 +159,3 @@ window.add = function (x){
     horse:new Horse(x,7),
   });
 }
-
-
-//chessBoard.render(boardDOM)
