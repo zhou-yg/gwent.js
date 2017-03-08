@@ -6,7 +6,6 @@
   "scripts": {
     "test": "",
     "example": "cd examples/test && node server.js",
-    "example2": "cd examples/gwent && node server.js",
     "example3": "cd examples/chess && node server.js"
   },
   "repository": {

@@ -1,7 +1,7 @@
 /**
  * Created by zyg on 17/3/2.
  */
-const types = require('./types');
+const types = require('../types');
 
 function struct(handler,defaultState) {
 
@@ -21,10 +21,10 @@ function struct(handler,defaultState) {
 
 
 const reducer = {
-  [types.TEST](state,a){
+  [types.FIND_PLAYER](state,a){
     return state + a.value;
   },
-  [types.TEST2](state,a){
+  [types.UPDATE_PLAYER](state,a){
     return state - a.value;
   }
 }

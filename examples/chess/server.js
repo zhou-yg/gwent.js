@@ -8,6 +8,7 @@ const MemoryFS = require('memory-fs');
 const mfs = new MemoryFS();
 
 const createStore = require('./store/store.js');
+const types = require('./store/types.js');
 
 const userMap = {};
 
@@ -18,11 +19,12 @@ const app = Gwent({
   onConnect(){
     console.log('connect');
 
-    userMap[this.socket.id] = {
+    this.userData = {
       username: 'u' + (i++),
       store: this.store,
     };
 
+    userMap[this.socket.id] = this.userData;
     try {
 
     } catch (e) {
@@ -124,6 +126,35 @@ app.io.route('new user', function *() {
     }));
   }catch(e){
 
+  }
+});
+app.io.route('match user',function * (next,username){
+  
+  if(username !== this.userData.username){
+
+    var findPlayer = null;
+
+    Object.keys(userMap).map(socketId=>{
+      if(userMap[socketId].username === username ){
+        findPlayer = userMap[socketId];
+      }
+    });
+
+    console.log('findPlayer:',findPlayer);
+
+    this.store.dispatch({
+      type:types.FIND_PLAYER,
+      player:findPlayer
+    });
+
+    findPlayer.store.dispatch({
+      type:types.FIND_PLAYER,
+      player:this.userData,
+    });
+
+
+  }else{
+    this.emit('log','同名')
   }
 });
 

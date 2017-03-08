@@ -2,14 +2,16 @@ require('./assets/style.less');
 
 import createStore from './store/store'
 import types from './store/types'
-import { INIT_CODE } from './store/reducers'
+import { INIT_CODE } from './store/reducers/chess'
 import gwentTypes from '../../bin/types'
 
 const socket = io();
 
-const store = createStore(socket);
+socket.on('log',function (a){
+  console.log('log:',a);
+});
 
-window.S = store;
+const store = createStore(socket);
 
 socket.emit('new user');
 
@@ -21,7 +23,8 @@ class UserList {
 
     this.container = document.querySelector('#userList');
 
-    socket.on('users',(list)=>{
+    this.socket = socket;
+    this.socket.on('users',(list)=>{
       console.log('users');
       this.list = list.map(obj=>{
 
@@ -39,6 +42,11 @@ class UserList {
     const frag = this.list.map(obj=>{
       const li = document.createElement('li');
       li.innerText = obj.username;
+      li.onclick = () => {
+
+        this.socket.emit('match user',obj.username);
+      };
+
       return li;
     }).reduce((frag,li)=>{
       frag.appendChild(li);
@@ -117,11 +125,34 @@ class ChessBoard {
         if(v === INIT_CODE){
 
           grid.className = 'grid';
+          grid.onclick = () => {
 
+            if(this.selectChess){
+              store.dispatch({
+                type:types.CHESS_MOVE,
+                from:gwentTypes.BROWSER_TAG,
+                selectChess:this.selectChess,
+                to:{
+                  x:j,
+                  y:i,
+                }
+              });
+              this.selectChess = null;
+            }else{
+              console.log('当前没选中')
+            }
+          }
 
         }else if(v instanceof Horse || v.type === 'Horse'){
 
           grid.className = 'grid horse';
+          grid.onclick = () => {
+            this.selectChess = {
+              type:'Horse',
+              y:i,
+              x:j
+            }
+          }
         }
       });
     });
@@ -148,8 +179,6 @@ store.dispatch({
   type:types.CHESS_ADD,
   horse:new Horse(0,7),
 });
-
-//chessBoard.render(boardDOM)
 
 window.add = function (x){
 
