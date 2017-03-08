@@ -39,8 +39,6 @@ const reducer = {
 
     const obj = state[a.selectChess.y][a.selectChess.x];
 
-    debugger;
-
     state[a.selectChess.y][a.selectChess.x] = INIT_CODE;
     state[a.to.y][a.to.x] = obj;
 

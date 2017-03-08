@@ -15,6 +15,10 @@ const store = createStore(socket);
 
 socket.emit('new user');
 
+socket.on(gwentTypes.SOCKET_ROUTE,(a)=>{
+  //store.dispatch(a);
+});
+
 const boardDOM = document.querySelector('#board');
 
 class UserList {
