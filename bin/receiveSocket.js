@@ -5,9 +5,7 @@ const types = require('./types');
 
 
 module.exports = (socket) => store => next =>{
-
-
-
+  
   socket.on(types.SOCKET_ROUTE,(action)=>{
     console.log('接收:',action);
 

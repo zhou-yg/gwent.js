@@ -11,13 +11,12 @@ socket.on('log',function (a){
   console.log('log:',a);
 });
 
-const store = createStore(socket);
+const store = createStore(socket,{
+  browser:true,
+});
 
 socket.emit('new user');
 
-socket.on(gwentTypes.SOCKET_ROUTE,(a)=>{
-  //store.dispatch(a);
-});
 
 const boardDOM = document.querySelector('#board');
 
@@ -174,14 +173,19 @@ const userList = new UserList(socket);
 
 store.subscribe(()=>{
 
-  chessBoard.index = store.getState().boardIndex;
+  const s = store.getState();
+  var index = s.boardIndex;
+  var enemy = s.player;
+
+  const final = index.map((row,i)=>{
+    return row.map((code,j)=>{
+      return (enemy[i] && enemy[i][j]) || code;
+    });
+  });
+
+  chessBoard.index = final;
 
   chessBoard.render(boardDOM);
-});
-
-store.dispatch({
-  type:types.CHESS_ADD,
-  horse:new Horse(0,7),
 });
 
 window.add = function (x){
@@ -191,4 +195,4 @@ window.add = function (x){
     from:gwentTypes.BROWSER_TAG,
     horse:new Horse(x,7),
   });
-}
+};

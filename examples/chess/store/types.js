@@ -5,6 +5,7 @@
 module.exports = {
   TEST:'testx',
   TEST2:'test2',
+  FIND_PLAYER: '对手',
 
   CHESS_ADD:'棋子添加',
 

@@ -29,6 +29,7 @@ function Gwent(options){
 
   app.io.use(function * (next){
 
+    try {
       this.store = createStore(this.socket);
 
       onConnect.call(this);
@@ -36,12 +37,12 @@ function Gwent(options){
       var i = 0;
       const unSubscribe = this.store.subscribe(()=> {
 
-        console.log('server getState:',this.socket.id);
-        console.log('lastAction:',this.store.lastAction);
+        console.log('server getState:', this.socket.id);
+        console.log('lastAction:', this.store.lastAction);
 
         this.store.lastAction.i = i++;
 
-        this.emit(types.SOCKET_ROUTE,this.store.lastAction);
+        this.emit(types.SOCKET_ROUTE, this.store.lastAction);
       });
 
       yield next;
@@ -49,6 +50,9 @@ function Gwent(options){
       onDisconnect.call(this);
 
       unSubscribe();
+    }catch(e){
+      console.log(e);
+    }
 
   });
 

@@ -29,8 +29,7 @@ const reducer = {
 
     state[horse.y][horse.x] = horse;
 
-
-
+    
     return state.slice();
   },
   [types.CHESS_MOVE](state,a){

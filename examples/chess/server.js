@@ -142,15 +142,19 @@ app.io.route('match user',function * (next,username){
 
     console.log('findPlayer:',findPlayer);
 
-    this.store.dispatch({
-      type:types.FIND_PLAYER,
-      player:findPlayer
-    });
 
-    findPlayer.store.dispatch({
+    findPlayer.store.lastAction = {
       type:types.FIND_PLAYER,
-      player:this.userData,
-    });
+      player:findPlayer.store.getState().boardIndex,
+    };
+    findPlayer.store.dispatch(findPlayer.store.lastAction);
+
+
+    this.store.lastAction = {
+      type:types.FIND_PLAYER,
+      player:this.userData.store.getState().boardIndex,
+    };
+    this.store.dispatch(this.store.lastAction);
 
 
   }else{

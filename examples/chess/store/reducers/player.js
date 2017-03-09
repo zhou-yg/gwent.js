@@ -22,11 +22,13 @@ function struct(handler,defaultState) {
 
 const reducer = {
   [types.FIND_PLAYER](state,a){
-    return state + a.value;
+    return a.player;
   },
-  [types.UPDATE_PLAYER](state,a){
-    return state - a.value;
+
+  [types.CHESS_MOVE](state,a){
+    
+    return state;
   }
 }
 
-module.exports = struct(reducer,0);
+module.exports = struct(reducer,[]);
