@@ -30,7 +30,7 @@ module.exports = function createMyStore(socket,options) {
   }
 
   const store = createStore(combineReducers({
-    boardIndex:chess,
+    boardIndex:chess(),
     player,
   }),enhancer);
 

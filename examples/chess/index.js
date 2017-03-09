@@ -156,6 +156,8 @@ class ChessBoard {
               x:j
             }
           }
+        }else{
+          grid.className = 'grid horse2';
         }
       });
     });
@@ -179,7 +181,12 @@ store.subscribe(()=>{
 
   const final = index.map((row,i)=>{
     return row.map((code,j)=>{
-      return (enemy[i] && enemy[i][j]) || code;
+      var enemyObj = enemy[i] && enemy[i][j];
+      if(enemyObj){
+        enemyObj.type = 'Enemy';
+        return enemyObj;
+      }
+      return code;
     });
   });
 

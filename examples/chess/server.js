@@ -145,14 +145,14 @@ app.io.route('match user',function * (next,username){
 
     findPlayer.store.lastAction = {
       type:types.FIND_PLAYER,
-      player:findPlayer.store.getState().boardIndex,
+      player:this.store.getState().boardIndex,
     };
     findPlayer.store.dispatch(findPlayer.store.lastAction);
 
 
     this.store.lastAction = {
       type:types.FIND_PLAYER,
-      player:this.userData.store.getState().boardIndex,
+      player:findPlayer.store.getState().boardIndex,
     };
     this.store.dispatch(this.store.lastAction);
 

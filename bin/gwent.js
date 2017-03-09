@@ -60,7 +60,7 @@ function Gwent(options){
 
     action.from = 'by gwent';
     this.store.lastAction = action;
-
+    
     this.store.dispatch(action);
   });
 
