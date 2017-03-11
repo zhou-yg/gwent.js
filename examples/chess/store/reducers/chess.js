@@ -5,16 +5,16 @@ const types = require('../types');
 
 const INIT_CODE = 0;
 
-function struct(handler,defaultState) {
+function struct(handler, defaultState) {
 
-  return function handlerFn(state,action){
+  return function handlerFn(state, action) {
 
-    if(state === undefined){
+    if (state === undefined) {
       state = defaultState;
     }
 
-    if(handler[action.type]){
-      return handler[action.type](state,action)
+    if (handler[action.type]) {
+      return handler[action.type](state, action)
     }
 
     return state;
@@ -23,47 +23,48 @@ function struct(handler,defaultState) {
 
 
 const reducer = {
-  [types.CHESS_ADD](state,a){
+  [types.CHESS_ADD](state, a){
 
     const horse = a.horse;
 
     state[horse.y][horse.x] = horse;
 
     console.log(state);
-    
-    return state.slice();
-  },
-  [types.CHESS_MOVE](state,a){
-
-    console.log('a:',a);
-
-    const obj = state[a.selectChess.y][a.selectChess.x];
-
-    state[a.selectChess.y][a.selectChess.x] = INIT_CODE;
-    state[a.to.y][a.to.x] = obj;
 
     return state.slice();
-
   },
-  [types.CLICK_ON_GRID](state,a){
+  [types.CHESS_MOVE](state, a){
+    if(a.isSelf) {
+
+      console.log('CHESS_MOVE :', a);
+
+      const obj = state[a.selectChess.y][a.selectChess.x];
+
+      state[a.selectChess.y][a.selectChess.x] = INIT_CODE;
+      state[a.to.y][a.to.x] = obj;
+
+      return state.slice();
+    }
+    return state;
+  },
+  [types.CLICK_ON_GRID](state, a){
 
 
   }
 };
 
 
-
 function createReducer() {
 
   const index = () => [
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
-    [INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE,INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
   ];
 
   const structReducer = struct(reducer, index());

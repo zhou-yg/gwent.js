@@ -7,6 +7,8 @@ const types = require('./types');
 const actionRedirect = require('./actionRedirect');
 const receiveSocket = require('./receiveSocket');
 
+const __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
+
 var workId = process.env.UNIQUE_ID || 0;
 workId = Number(workId);
 if(isNaN(workId)){
@@ -14,6 +16,19 @@ if(isNaN(workId)){
 }
 
 shortid.worker(workId);
+
+
+function addSocketAction(store){
+
+  store.socketDispatch = function(action){
+
+    store[__SOCKET_ROUTE_ACTION] = action;
+
+    store.dispatch(action);
+  };
+
+  return store;
+}
 
 function Gwent(options){
 
@@ -30,19 +45,28 @@ function Gwent(options){
   app.io.use(function * (next){
 
     try {
-      this.store = createStore(this.socket);
+      this.store = addSocketAction(createStore(this.socket));
 
       onConnect.call(this);
 
       var i = 0;
       const unSubscribe = this.store.subscribe(()=> {
 
-        console.log('server getState:', this.socket.id);
-        console.log('lastAction:', this.store.lastAction);
+        if(this.store[__SOCKET_ROUTE_ACTION]) {
+          
+          console.log('server getState:', this.socket.id);
+          console.log('lastAction:', this.store[__SOCKET_ROUTE_ACTION]);
 
-        this.store.lastAction.i = i++;
+          const action = Object.assign({
+            i:i++,
+            isSelf:true,
+          },this.store[__SOCKET_ROUTE_ACTION]);
 
-        this.emit(types.SOCKET_ROUTE, this.store.lastAction);
+
+          this.emit(types.SOCKET_ROUTE, action);
+
+          this.store[__SOCKET_ROUTE_ACTION] = null;
+        }
       });
 
       yield next;
@@ -59,9 +83,8 @@ function Gwent(options){
   app.io.route(types.SOCKET_ROUTE, function * (next,action){
 
     action.from = 'by gwent';
-    this.store.lastAction = action;
-    
-    this.store.dispatch(action);
+
+    this.store.socketDispatch(action);
   });
 
   return app;

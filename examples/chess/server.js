@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('path');
 const fs = require('fs');
 const babel = require('babel-core');
@@ -13,6 +15,55 @@ const types = require('./store/types.js');
 const userMap = {};
 
 var i = 0;
+
+class BattleManager {
+
+  constructor(userA,userB){
+    this.userA = userA;
+    this.userB = userB;
+    this.users = [this.userA,this.userB];
+
+    this._userADispatch = userA.store.socketDispatch;
+    this._userBDispatch = userB.store.socketDispatch;
+
+    var dispatchers = [this._userADispatch,this._userBDispatch];
+
+    this.unsubscribe = this.users.map((user,i)=>{
+
+      user.store.socketDispatch = (action) => {
+
+        try {
+
+
+          dispatchers.forEach((dispatch, j)=> {
+
+            action = Object.assign({}, action, {
+              isSelf: i === j,
+            });
+            console.log(`Manager.Dispatch ${j}`, action);
+
+            dispatch.call(this.users[j].store, action);
+          });
+        }catch(e){
+          console.log(`e ${i}`,e);
+        }
+      };
+
+      return user.store.subscribe(() => {
+
+        var state = user.store.getState();
+
+        console.log('Manager',i+' lastAction:',user.store.__SOCKET_ROUTE_ACTION);
+      });
+    })
+  }
+
+  end () {
+    this.userA.store.dispatch = this._userADispatch;
+    this.userB.store.dispatch = this._userBDispatch;
+    this.unsubscribe.forEach(fn=>fn());
+  }
+}
 
 const app = Gwent({
   createStore,
@@ -129,7 +180,11 @@ app.io.route('new user', function *() {
   }
 });
 app.io.route('match user',function * (next,username){
-  
+
+  if(this.userData.battleManager){
+    this.userData.battlerManager.end();
+  }
+
   if(username !== this.userData.username){
 
     var findPlayer = null;
@@ -142,20 +197,23 @@ app.io.route('match user',function * (next,username){
 
     console.log('findPlayer:',findPlayer);
 
-
-    findPlayer.store.lastAction = {
+    findPlayer.store.socketDispatch({
       type:types.FIND_PLAYER,
+      isSelf:true,
       player:this.store.getState().boardIndex,
-    };
-    findPlayer.store.dispatch(findPlayer.store.lastAction);
+    });
 
 
-    this.store.lastAction = {
+    this.store.socketDispatch({
       type:types.FIND_PLAYER,
+      isSelf:true,
       player:findPlayer.store.getState().boardIndex,
-    };
-    this.store.dispatch(this.store.lastAction);
+    });
 
+    const battleManager = new BattleManager(this.userData,findPlayer);
+
+    this.userData.battlerManager = batterManager;
+    findPlayer.battlerManager = batterManager;
 
   }else{
     this.emit('log','同名')
