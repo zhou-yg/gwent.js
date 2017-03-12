@@ -35,14 +35,15 @@ class BattleManager {
         try {
 
 
-          dispatchers.forEach((dispatch, j)=> {
+          dispatchers.forEach((socketDispatch, j)=> {
 
             action = Object.assign({}, action, {
+              from:action.from + ` by battle manager`,
               isSelf: i === j,
             });
             console.log(`Manager.Dispatch ${j}`, action);
 
-            dispatch.call(this.users[j].store, action);
+            socketDispatch.call(this.users[j].store, action);
           });
         }catch(e){
           console.log(`e ${i}`,e);

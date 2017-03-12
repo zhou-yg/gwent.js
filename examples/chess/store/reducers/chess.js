@@ -25,13 +25,16 @@ function struct(handler, defaultState) {
 const reducer = {
   [types.CHESS_ADD](state, a){
 
-    const horse = a.horse;
+    if(a.isSelf){
+      const horse = a.horse;
 
-    state[horse.y][horse.x] = horse;
+      state[horse.y][horse.x] = horse;
 
-    console.log(state);
+      console.log(state);
 
-    return state.slice();
+      return state.slice();
+    }
+    return state;
   },
   [types.CHESS_MOVE](state, a){
     if(a.isSelf) {
@@ -53,19 +56,22 @@ const reducer = {
   }
 };
 
+const index = () => [
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+  [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
+];
+
 
 function createReducer() {
 
-  const index = () => [
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-    [INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE, INIT_CODE],
-  ];
+
+
 
   const structReducer = struct(reducer, index());
 
@@ -73,5 +79,7 @@ function createReducer() {
 };
 
 createReducer.INIT_CODE = INIT_CODE;
+createReducer.HEIGHT = index().length;
+createReducer.WIDTH = index()[0].length;
 
 module.exports = createReducer;

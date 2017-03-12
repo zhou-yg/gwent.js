@@ -82,7 +82,8 @@ function Gwent(options){
 
   app.io.route(types.SOCKET_ROUTE, function * (next,action){
 
-    action.from = 'by gwent';
+    action.from = 'by default route';
+    action.isSelf = true;
 
     this.store.socketDispatch(action);
   });
