@@ -72,8 +72,6 @@ const reducer = {
     if(!a.isSelf){
       console.log('对手移动了:',JSON.stringify(a));
 
-      a = _.cloneDeep(a);
-      
       a.selectChess = transformAction(a.selectChess);
       a.to = transformAction(a.to);
 

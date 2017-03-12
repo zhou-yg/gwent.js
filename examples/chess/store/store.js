@@ -1,5 +1,6 @@
 const redux = require('redux');
 
+const reduxAssign = require('redux-assign');
 const createStore = redux.createStore;
 const combineReducers = redux.combineReducers;
 const applyMiddleware = redux.applyMiddleware;
@@ -20,11 +21,13 @@ module.exports = function createMyStore(socket,options) {
   var enhancer;
   if(browser){
     enhancer = applyMiddleware(
+      reduxAssign(true),
       middlewares.receiveSocket(socket),
       middlewares.actionRedirect(socket)
     );
   }else{
     enhancer = applyMiddleware(
+      reduxAssign(true),
       middlewares.actionRedirect(socket)
     );
   }

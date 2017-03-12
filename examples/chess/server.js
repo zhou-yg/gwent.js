@@ -166,16 +166,15 @@ app.io.route('new user', function *() {
   console.log('new user');
 
   try{
-    this.emit('users', Object.keys(userMap).map(k=> {
+
+    const users = Object.keys(userMap).map(k=> {
       return {
         username: userMap[k].username,
       }
-    }));
-    this.broadcast.emit('users', Object.keys(userMap).map(k=> {
-      return {
-        username: userMap[k].username,
-      }
-    }));
+    });
+
+    this.emit('users', users);
+    this.broadcast.emit('users',users);
   }catch(e){
 
   }

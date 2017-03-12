@@ -9,6 +9,7 @@ const socket = io();
 
 socket.on('log',function (a){
   console.log('log:',a);
+  logObj.log(a);
 });
 
 const store = createStore(socket,{
@@ -20,6 +21,35 @@ socket.emit('new user');
 
 const boardDOM = document.querySelector('#board');
 
+
+const logObj = {
+  $el: document.querySelector('#log'),
+  data:{
+    list:[],
+    i:0,
+  },
+  log (str) {
+    str = String(str);
+    if(this.data.list.length >= 3){
+      this.data.list = this.data.list.slice(0,2);
+    }
+    this.data.list = [str].concat(this.data.list);
+    this.data.i++;
+    this.render();
+  },
+  render(){
+    const frag = document.createDocumentFragment();
+    this.data.list.map((str,i)=>{
+      var p = document.createElement('p')
+      p.className = 'log-one';
+      p.innerText = (this.data.i + i)+'.'+str;
+      frag.appendChild(p);
+    });
+    this.$el.innerHTML = '';
+    this.$el.appendChild(frag);
+  }
+};
+
 class UserList {
 
   constructor(socket){
@@ -28,7 +58,7 @@ class UserList {
 
     this.socket = socket;
     this.socket.on('users',(list)=>{
-      console.log('users');
+
       this.list = list.map(obj=>{
 
         return {
@@ -142,7 +172,7 @@ class ChessBoard {
               });
               this.selectChess = null;
             }else{
-              console.log('当前没选中')
+              logObj.log('当前没选中');
             }
           }
 
@@ -154,7 +184,8 @@ class ChessBoard {
               type:'Horse',
               y:i,
               x:j
-            }
+            };
+            logObj.log(`选择了${j},${i}`);
           }
         }else{
           grid.className = 'grid horse2';

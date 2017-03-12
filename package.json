@@ -25,11 +25,13 @@
   },
   "homepage": "https://github.com/zhou-yg/gwent.js#readme",
   "dependencies": {
+    "babel-runtime": "^6.23.0",
     "koa": "^2.0.0-alpha.8",
     "koa-convert": "^1.2.0",
     "koa.io": "0.0.3",
     "lodash": "^4.17.4",
-    "redux": "^3.6.0"
+    "redux": "^3.6.0",
+    "shortid": "^2.2.8"
   },
   "devDependencies": {
     "babel-core": "^6.23.1",
