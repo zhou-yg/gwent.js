@@ -12,4 +12,8 @@ module.exports = {
   CHESS_MOVE:'棋子移动',
 
   CLICK_ON_GRID:'点击格子',
+
+  SELECT_CHESS:'选择棋子',
+
+  CLEAR_CHESS:'清除选择',
 };

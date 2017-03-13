@@ -7,6 +7,8 @@ const applyMiddleware = redux.applyMiddleware;
 
 const chess = require('./reducers/chess');
 const player = require('./reducers/player');
+const selectChess = require('./reducers/selectChess');
+
 
 const middlewares = require('../../../middlewares');
 
@@ -35,6 +37,7 @@ module.exports = function createMyStore(socket,options) {
   const store = createStore(combineReducers({
     boardIndex:chess(),
     player,
+    selectChess,
   }),enhancer);
 
 

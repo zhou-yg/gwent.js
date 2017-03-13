@@ -152,42 +152,62 @@ class ChessBoard {
         let grid = document.createElement('div');
         div.appendChild(grid);
 
+        grid.className = 'grid';
 
         this.addEvent(grid,i,j);
 
-        if(v === INIT_CODE){
 
-          grid.className = 'grid';
-          grid.onclick = () => {
+        grid.onclick = () => {
 
-            if(this.selectChess){
-              store.dispatch({
-                type:types.CHESS_MOVE,
-                from:gwentTypes.BROWSER_TAG,
-                selectChess:this.selectChess,
-                to:{
-                  x:j,
-                  y:i,
-                }
-              });
-              this.selectChess = null;
+            var boardIndex = store.getState().boardIndex;
+            var select = store.getState().selectChess;
+
+            if(select){
+
+              var clickedObj = boardIndex[i][j];
+
+              console.log(clickedObj)
+
+              if(clickedObj && clickedObj.type === 'move'){
+
+                store.dispatch({
+                  type: types.CHESS_MOVE,
+                  from: gwentTypes.BROWSER_TAG,
+                  selectChess: select,
+                  to: {
+                    x: j,
+                    y: i,
+                  }
+                });
+                store.dispatch({
+                  type:types.CLEAR_CHESS,
+                });
+              }else{
+                logObj.log('只能移动到绿色方块');
+              }
+
             }else{
               logObj.log('当前没选中');
             }
-          }
+        }
 
-        }else if(v instanceof Horse || v.type === 'Horse'){
+        if(v instanceof Horse || v.type === 'Horse'){
 
           grid.className = 'grid horse';
           grid.onclick = () => {
-            this.selectChess = {
-              type:'Horse',
+
+            store.dispatch({
+              type:types.SELECT_CHESS,
+              chessType:'Horse',
               y:i,
               x:j
-            };
+            });
+
             logObj.log(`选择了${j},${i}`);
           }
-        }else{
+        }else if(v.type === 'move'){
+          grid.className = 'grid move';
+        }else if(v){
           grid.className = 'grid horse2';
         }
       });
@@ -234,3 +254,5 @@ window.add = function (x){
     horse:new Horse(x,7),
   });
 };
+
+window.add(1);
