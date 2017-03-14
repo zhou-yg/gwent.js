@@ -15,6 +15,9 @@ socket.on('log',function (a){
 const store = createStore(socket,{
   browser:true,
 });
+store.subscribe(function(){
+  console.log('x');
+});
 
 socket.emit('new user');
 
@@ -95,26 +98,23 @@ class UserList {
 class Horse {
 
   constructor(x,y){
-
-    this.type = 'Horse';
+    this.name = 'Horse';
+    this.type = 'Chess';
     this.x = x;
     this.y = y;
 
   }
-
-  goCheck(x,y) {
-
-    return Math.abs(x - this.x) === 1 && Math.abs(y - this.y) === 2
-  }
-
-  go(x,y){
-
-    if(this.goCheck(x,y)){
-      this.x = x;
-      this.y = y;
-    }
+}
+class Rook {
+  constructor(x,y){
+    this.name = 'Rook';
+    this.type = 'Chess';
+    this.x = x;
+    this.y = y;
   }
 }
+
+
 
 class ChessBoard {
 
@@ -156,7 +156,6 @@ class ChessBoard {
 
         this.addEvent(grid,i,j);
 
-
         grid.onclick = () => {
 
             var boardIndex = store.getState().boardIndex;
@@ -191,14 +190,17 @@ class ChessBoard {
             }
         }
 
-        if(v instanceof Horse || v.type === 'Horse'){
+        if(v.type === 'Chess'){
 
           grid.className = 'grid horse';
           grid.onclick = () => {
 
             store.dispatch({
+              type:types.CLEAR_CHESS,
+            });
+
+            store.dispatch({
               type:types.SELECT_CHESS,
-              chessType:'Horse',
               y:i,
               x:j
             });
@@ -255,4 +257,14 @@ window.add = function (x){
   });
 };
 
-window.add(1);
+store.dispatch({
+  type:types.CHESS_ADD,
+  from:gwentTypes.BROWSER_TAG,
+  chess:new Horse(3,7),
+});
+
+store.dispatch({
+  type:types.CHESS_ADD,
+  from:gwentTypes.BROWSER_TAG,
+  chess:new Rook(2,7),
+});
