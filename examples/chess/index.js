@@ -158,7 +158,7 @@ class ChessBoard {
 
         grid.onclick = () => {
 
-            var boardIndex = store.getState().boardIndex;
+            var boardIndex = this.index;
             var select = store.getState().selectChess;
 
             if(select){

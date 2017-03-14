@@ -47,9 +47,6 @@ const reducer = {
   [types.CHESS_MOVE](state, a){
     if(a.isSelf) {
 
-      console.log('CHESS_MOVE :', state);
-      console.log('CHESS_MOVE :', a);
-
       const obj = state[a.selectChess.y][a.selectChess.x];
 
       state[a.selectChess.y][a.selectChess.x] = INIT_CODE;
@@ -67,7 +64,6 @@ const reducer = {
 
     var obj = state[a.y][a.x];
 
-    console.log(obj);
     var checkMoveFn = fnMap[obj.name];
 
     var arr = state.map((row,y)=>{
@@ -117,7 +113,6 @@ function createReducer() {
   return function(state,a){
 
     var r = structReducer.apply(this,arguments);
-    console.log(JSON.stringify(r),JSON.stringify(a));
     return r;
   };
 };

@@ -70,12 +70,8 @@ const reducer = {
   [types.CHESS_MOVE](state,a){
 
     if(!a.isSelf){
-      console.log('对手移动了:',JSON.stringify(a));
-
       a.selectChess = transformAction(a.selectChess);
       a.to = transformAction(a.to);
-
-      console.log('对手移动了2:',JSON.stringify(a));
 
       const obj = state[a.selectChess.y][a.selectChess.x];
 
