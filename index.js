@@ -1,3 +1,3 @@
-var Gwent = require('./bin/gwent');
+var Gwent = require('./src/gwent');
 
 module.exports = Gwent;

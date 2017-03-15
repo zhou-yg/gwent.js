@@ -1,9 +1,9 @@
 /**
  * Created by zyg on 17/3/4.
  */
-const actionRedirect = require('./bin/actionRedirect');
-const receiveSocket = require('./bin/receiveSocket');
-const types = require('./bin/types');
+const actionRedirect = require('./src/lib/actionRedirect');
+const receiveSocket = require('./src/lib/receiveSocket');
+const types = require('./src/lib/types');
 
 module.exports = {
   actionRedirect,

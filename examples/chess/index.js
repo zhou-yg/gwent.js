@@ -3,7 +3,8 @@ require('./assets/style.less');
 import createStore from './store/store'
 import types from './store/types'
 import { INIT_CODE } from './store/reducers/chess'
-import gwentTypes from '../../bin/types'
+import gwentTypes from '../../src/lib/types'
+import watcher from '../../src/lib/watcher'
 
 const socket = io();
 
@@ -226,11 +227,8 @@ const chessBoard = new ChessBoard();
 
 const userList = new UserList(socket);
 
-store.subscribe(()=>{
 
-  const s = store.getState();
-  var index = s.boardIndex;
-  var enemy = s.player;
+function rerender(index,enemy){
 
   const final = index.map((row,i)=>{
     return row.map((code,j)=>{
@@ -245,7 +243,21 @@ store.subscribe(()=>{
 
   chessBoard.index = final;
 
-  chessBoard.render(boardDOM);
+  chessBoard.render(boardDOM);}
+
+watcher(store,{
+  boardIndex(value,old,state){
+    var index = value;
+    var enemy = state.player;
+
+    rerender(index,enemy);
+  },
+  player(value,old,state){
+    var index = state.boardIndex;
+    var enemy = value;
+
+    rerender(index,enemy);
+  }
 });
 
 window.add = function (x){

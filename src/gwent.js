@@ -2,10 +2,10 @@ const shortid = require('shortid');
 
 const koaIO = require('koa.io');
 
-const types = require('./types');
+const types = require('./lib/types');
 
-const actionRedirect = require('./actionRedirect');
-const receiveSocket = require('./receiveSocket');
+const actionRedirect = require('./lib/actionRedirect');
+const receiveSocket = require('./lib/receiveSocket');
 
 const __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
 
