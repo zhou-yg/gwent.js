@@ -200,14 +200,14 @@ app.io.route('match user',function * (next,username){
     findPlayer.store.socketDispatch({
       type:types.FIND_PLAYER,
       isSelf:true,
-      player:this.store.getState().boardIndex,
+      player:this.store.getState().player,
     });
 
 
     this.store.socketDispatch({
       type:types.FIND_PLAYER,
       isSelf:true,
-      player:findPlayer.store.getState().boardIndex,
+      player:findPlayer.store.getState().player,
     });
 
     const battleManager = new BattleManager(this.userData,findPlayer);

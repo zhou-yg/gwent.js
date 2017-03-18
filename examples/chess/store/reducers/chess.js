@@ -33,26 +33,10 @@ const fnMap = {
 
 
 const reducer = {
-  [types.CHESS_ADD](state, a){
-
-    if(a.isSelf){
-      const horse = a.chess;
-
-      state[horse.y][horse.x] = horse;
-
-      return state.slice();
-    }
-    return state;
-  },
   [types.CHESS_MOVE](state, a){
     if(a.isSelf) {
-
-      const obj = state[a.selectChess.y][a.selectChess.x];
-
-      state[a.selectChess.y][a.selectChess.x] = INIT_CODE;
-      state[a.to.y][a.to.x] = obj;
-
-      return state.slice();
+      //消除移动标志
+      return index();
     }
     return state;
   },
@@ -62,13 +46,13 @@ const reducer = {
   },
   [types.SELECT_CHESS](state,a){
 
-    var obj = state[a.y][a.x];
+    var selectChess = a.selectChess;
 
-    var checkMoveFn = fnMap[obj.name];
-
+    var checkMoveFn = fnMap[selectChess.name];
+    
     var arr = state.map((row,y)=>{
       return row.map((code,x)=>{
-        if(checkMoveFn(x,y,a.x,a.y) && code === INIT_CODE){
+        if(checkMoveFn(x,y,selectChess.x,selectChess.y) && code === INIT_CODE){
           return {
             type:'move'
           };

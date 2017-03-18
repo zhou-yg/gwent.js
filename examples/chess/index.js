@@ -16,15 +16,8 @@ socket.on('log',function (a){
 const store = createStore(socket,{
   browser:true,
 });
-store.subscribe(function(){
-  console.log('x');
-});
 
 socket.emit('new user');
-
-
-const boardDOM = document.querySelector('#board');
-
 
 const logObj = {
   $el: document.querySelector('#log'),
@@ -120,9 +113,11 @@ class Rook {
 class ChessBoard {
 
   constructor(){
-
+    this.index = [];
+    this.player = [];
+    this.enemy = [];
     this.INIT_CODE = INIT_CODE;
-
+    this.boardDOM = document.querySelector('#board');
   }
 
   addEvent(dom,i,j){
@@ -135,12 +130,14 @@ class ChessBoard {
     }
   }
 
-  render(container){
+  render(){
 
     const INIT_CODE = this.INIT_CODE;
 
     const frag = document.createDocumentFragment();
 
+
+    //渲染地形
     this.index.forEach((row,i)=>{
 
       const div = document.createElement('div');
@@ -151,75 +148,77 @@ class ChessBoard {
       row.forEach((v,j)=>{
 
         let grid = document.createElement('div');
-        div.appendChild(grid);
-
         grid.className = 'grid';
 
-        this.addEvent(grid,i,j);
+        div.appendChild(grid);
 
-        grid.onclick = () => {
 
-            var boardIndex = this.index;
-            var select = store.getState().selectChess;
-
-            if(select){
-
-              var clickedObj = boardIndex[i][j];
-
-              console.log(clickedObj)
-
-              if(clickedObj && clickedObj.type === 'move'){
-
-                store.dispatch({
-                  type: types.CHESS_MOVE,
-                  from: gwentTypes.BROWSER_TAG,
-                  selectChess: select,
-                  to: {
-                    x: j,
-                    y: i,
-                  }
-                });
-                store.dispatch({
-                  type:types.CLEAR_CHESS,
-                });
-              }else{
-                logObj.log('只能移动到绿色方块');
-              }
-
-            }else{
-              logObj.log('当前没选中');
-            }
-        }
-
-        if(v.type === 'Chess'){
-
-          grid.className = 'grid horse';
+        if(v && v.type === 'move'){
+          grid.className += ' move';
           grid.onclick = () => {
-
             store.dispatch({
-              type:types.CLEAR_CHESS,
+              type:types.CHESS_MOVE,
+              from:gwentTypes.BROWSER_TAG,
+              selectChess:this.selectChess,
+              to:{
+                y:i,
+                x:j,
+              }
             });
-
-            store.dispatch({
-              type:types.SELECT_CHESS,
-              y:i,
-              x:j
-            });
-
-            logObj.log(`选择了${j},${i}`);
           }
-        }else if(v.type === 'move'){
-          grid.className = 'grid move';
-        }else if(v){
-          grid.className = 'grid horse2';
         }
+
       });
     });
 
-    container.innerHTML = '';
-    container.appendChild(frag);
+    this.boardDOM.innerHTML = '';
+    this.boardDOM.appendChild(frag);
+
+    //渲染敌我
 
     return frag;
+  }
+  renderChess () {
+
+    var addObj = (obj) => {
+      const x = obj.x;
+      const y = obj.y;
+
+      const grid = this.boardDOM.children[y].children[x];
+
+      grid.innerHTML = '';
+
+      const chess = document.createElement('div');
+      chess.className = 'chess ' + obj.camp;
+
+      grid.appendChild(chess);
+
+      return chess;
+    };
+
+    this.player.map((obj,i)=>{
+      const x = obj.x;
+      const y = obj.y;
+
+      const chess = addObj(obj);
+
+      chess.onclick = ()=>{
+        this.selectChess = {
+          name:obj.name,
+          x,
+          y,
+          index:i,
+        };
+        store.dispatch({
+          type:types.SELECT_CHESS,
+          selectChess:this.selectChess,
+        })
+      };
+    });
+
+    this.enemy.map(obj=>{
+      addObj(obj);
+    });
   }
 }
 
@@ -227,47 +226,39 @@ const chessBoard = new ChessBoard();
 
 const userList = new UserList(socket);
 
+function rerender(index){
 
-function rerender(index,enemy){
+  chessBoard.index = index;
 
-  const final = index.map((row,i)=>{
-    return row.map((code,j)=>{
-      var enemyObj = enemy[i] && enemy[i][j];
-      if(enemyObj){
-        enemyObj.type = 'Enemy';
-        return enemyObj;
-      }
-      return code;
-    });
-  });
+  chessBoard.render();
+}
 
-  chessBoard.index = final;
+function rerenderChess(player,enemy){
+  chessBoard.player = player;
+  chessBoard.enemy = enemy;
 
-  chessBoard.render(boardDOM);}
+  chessBoard.renderChess();
+}
+
+var initState = store.getState();
+
+rerender(initState.boardIndex);
+rerenderChess(initState.player,initState.enemy);
 
 watcher(store,{
   boardIndex(value,old,state){
-    var index = value;
-    var enemy = state.player;
-
-    rerender(index,enemy);
+    rerender(value);
+    rerenderChess(state.player,state.enemy);
   },
   player(value,old,state){
-    var index = state.boardIndex;
-    var enemy = value;
-
-    rerender(index,enemy);
-  }
+    rerender(state.boardIndex);
+    rerenderChess(value,state.enemy);
+  },
+  enemy(value,old,state){
+    rerender(state.boardIndex);
+    rerenderChess(state.player,value);
+  },
 });
-
-window.add = function (x){
-
-  store.dispatch({
-    type:types.CHESS_ADD,
-    from:gwentTypes.BROWSER_TAG,
-    horse:new Horse(x,7),
-  });
-};
 
 store.dispatch({
   type:types.CHESS_ADD,
