@@ -116,23 +116,10 @@ class ChessBoard {
     this.index = [];
     this.player = [];
     this.enemy = [];
-    this.INIT_CODE = INIT_CODE;
     this.boardDOM = document.querySelector('#board');
   }
 
-  addEvent(dom,i,j){
-
-    dom.onclick = () => {
-
-      const v = this.index[i][j];
-
-      console.log(v);
-    }
-  }
-
   render(){
-
-    const INIT_CODE = this.INIT_CODE;
 
     const frag = document.createDocumentFragment();
 
@@ -209,6 +196,9 @@ class ChessBoard {
           y,
           index:i,
         };
+
+        current.show(this.selectChess);
+
         store.dispatch({
           type:types.SELECT_CHESS,
           selectChess:this.selectChess,
@@ -222,9 +212,24 @@ class ChessBoard {
   }
 }
 
+class Current {
+  constructor(){
+    this.$el= document.querySelector('#current');
+  }
+  show({name,x,y}){
+    this.$el.innerHTML = '';
+
+    var text = `当前选择:${name},${x}-${y}`;
+
+    this.$el.innerText = text;
+  }
+}
+
 const chessBoard = new ChessBoard();
 
 const userList = new UserList(socket);
+
+const current = new Current();
 
 function rerender(index){
 

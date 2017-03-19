@@ -52,30 +52,17 @@ const reducer = {
     
     var arr = state.map((row,y)=>{
       return row.map((code,x)=>{
-        if(checkMoveFn(x,y,selectChess.x,selectChess.y) && code === INIT_CODE){
+        if(checkMoveFn(x,y,selectChess.x,selectChess.y) ){
           return {
             type:'move'
           };
         }else{
-          return code;
+          return INIT_CODE;
         }
       });
     });
     return arr;
   },
-  [types.CLEAR_CHESS](state,obj){
-
-    var arr = state.map((row,y)=>{
-      return row.map((code,x)=>{
-        // console.log(JSON.stringify(code));
-        if(code.type === 'move'){
-          return INIT_CODE;
-        }
-        return code;
-      });
-    });
-    return arr;
-  }
 };
 
 const index = () => [
