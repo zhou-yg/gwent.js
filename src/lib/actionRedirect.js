@@ -5,7 +5,11 @@ const types = require('./types');
 
 module.exports = (socket) => (store) => (next) => action => {
 
-  console.log('redirect action %s' ,JSON.stringify(action));
+  try {
+    JSON.stringify(action);
+  } catch (e) {
+    console.error(e);
+  }
 
   if(action.from === types.BROWSER_TAG){
     //....send to server

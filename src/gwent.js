@@ -53,7 +53,7 @@ function Gwent(options){
       const unSubscribe = this.store.subscribe(()=> {
 
         if(this.store[__SOCKET_ROUTE_ACTION]) {
-          
+
           console.log('server getState:', this.socket.id);
           console.log('lastAction:', this.store[__SOCKET_ROUTE_ACTION]);
 
@@ -74,8 +74,9 @@ function Gwent(options){
       onDisconnect.call(this);
 
       unSubscribe();
+
     }catch(e){
-      console.log(e);
+      console.log('error:', e);
     }
 
   });

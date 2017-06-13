@@ -81,10 +81,14 @@ class Watcher {
           return w.value;
         }
       });
+    }
+    this.value = instance[key];
 
-      this.value = instance[key];
+    if(!instance.$watchs){
+      instance.$watchs = {};
     }
     instance.$watchs[key] = this;
+
   }
 
   register(fn){
