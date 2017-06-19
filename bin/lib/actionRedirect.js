@@ -1,5 +1,11 @@
 'use strict';
 
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * Created by zyg on 17/3/4.
  */
@@ -11,7 +17,7 @@ module.exports = function (socket) {
       return function (action) {
 
         try {
-          JSON.stringify(action);
+          (0, _stringify2.default)(action);
         } catch (e) {
           console.error(e);
         }

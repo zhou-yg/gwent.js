@@ -1,5 +1,15 @@
 'use strict';
 
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var shortid = require('shortid');
 
 var koaIO = require('koa.io');
@@ -43,11 +53,11 @@ function Gwent(options) {
 
   var app = koaIO();
 
-  app.io.use(regeneratorRuntime.mark(function _callee(next) {
+  app.io.use(_regenerator2.default.mark(function _callee(next) {
     var _this = this;
 
     var i, unSubscribe;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -65,7 +75,7 @@ function Gwent(options) {
                 console.log('server getState:', _this.socket.id);
                 console.log('lastAction:', _this.store[__SOCKET_ROUTE_ACTION]);
 
-                var action = Object.assign({
+                var action = (0, _assign2.default)({
                   i: i++,
                   isSelf: true
                 }, _this.store[__SOCKET_ROUTE_ACTION]);
@@ -101,8 +111,8 @@ function Gwent(options) {
     }, _callee, this, [[0, 11]]);
   }));
 
-  app.io.route(types.SOCKET_ROUTE, regeneratorRuntime.mark(function _callee2(next, action) {
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+  app.io.route(types.SOCKET_ROUTE, _regenerator2.default.mark(function _callee2(next, action) {
+    return _regenerator2.default.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
