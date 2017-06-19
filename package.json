@@ -2,7 +2,7 @@
   "name": "gwent.js",
   "version": "1.0.3",
   "description": "a realtime framework",
-  "main": "index.js",
+  "main": "bin/gwent.js",
   "scripts": {
     "test": "",
     "example": "cd examples/test && node server.js",
