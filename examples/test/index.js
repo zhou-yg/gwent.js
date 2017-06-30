@@ -1,7 +1,21 @@
 import createStore from './store/store'
 import { TEST,TEST2 } from './store/types'
 
-const socket = io();
+const socket = io('http://localhost:9999/chat', {
+  query: {
+    name: 'zyg',
+    token: 'queryToken123',
+  },
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        'x-clientid': 'abc'
+      }
+    },
+  }
+});
+
+// socket.disconnect();
 
 const store = createStore(socket);
 
@@ -31,5 +45,5 @@ window.reduce1 = function (){
     from:'browser',
     value:1,
   })
-  
+
 }

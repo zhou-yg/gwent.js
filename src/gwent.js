@@ -1,6 +1,9 @@
 const shortid = require('shortid');
-
-const koaIO = require('koa.io');
+const chalk = require('chalk');
+// const koaIO = require('koa.io');
+const Koa = require('koa');
+const http = require('http');
+const socketIO = require('socket.io');
 
 const types = require('./lib/types');
 
@@ -40,54 +43,58 @@ function Gwent(options){
   const onConnect = options.onConnect || function(){};
   const onDisconnect = options.onDisconnect || function(){};
 
-  const app = koaIO();
+  const app = new Koa();
+  const server = http.createServer(app.callback());
+  const io = socketIO(server);
 
-  app.io.use(function * (next){
+  const ioConnectionSet = new Set();
 
-    try {
-      this.store = addSocketAction(createStore(this.socket));
+  io.on('connection', function(socket){
 
-      onConnect.call(this);
+    const store = addSocketAction(createStore(socket));
+    socket.store = store;
 
-      var i = 0;
-      const unSubscribe = this.store.subscribe(()=> {
+    onConnect.call(socket, socket);
 
-        if(this.store[__SOCKET_ROUTE_ACTION]) {
+    const unSubscribe = store.subscribe(() => {
+      if(store[__SOCKET_ROUTE_ACTION]) {
 
-          console.log('server getState:', this.socket.id);
-          console.log('lastAction:', this.store[__SOCKET_ROUTE_ACTION]);
+        console.log('server getState:', this.socket.id);
+        console.log('lastAction:', store[__SOCKET_ROUTE_ACTION]);
 
-          const action = Object.assign({
-            i:i++,
-            isSelf:true,
-          },this.store[__SOCKET_ROUTE_ACTION]);
+        const action = Object.assign({
+          i:i++,
+          isSelf:true,
+        },store[__SOCKET_ROUTE_ACTION]);
 
 
-          this.emit(types.SOCKET_ROUTE, action);
+        socket.emit(types.SOCKET_ROUTE, action);
 
-          this.store[__SOCKET_ROUTE_ACTION] = null;
-        }
-      });
+        store[__SOCKET_ROUTE_ACTION] = null;
+      }
+    });
 
-      yield next;
 
-      onDisconnect.call(this);
+    socket.on(types.SOCKET_ROUTE, function (action){
 
+      action.from = 'by default route';
+      action.isSelf = true;
+
+      store.socketDispatch(action);
+    });
+
+    socket.on('disconnect', (reasonMessage) => {
+
+      onDisconnect.call(socket, socket);
       unSubscribe();
-
-    }catch(e){
-      console.log('error:', e);
-    }
-
+    });
   });
 
-  app.io.route(types.SOCKET_ROUTE, function * (next,action){
+  app.listen = function () {
+    return server.listen.apply(server, arguments);
+  }
 
-    action.from = 'by default route';
-    action.isSelf = true;
-
-    this.store.socketDispatch(action);
-  });
+  app.io = io;
 
   return app;
 }
