@@ -5,6 +5,7 @@
   "main": "bin/gwent.js",
   "scripts": {
     "test": "",
+    "build": "gulp",
     "example": "cd examples/test && node server.js",
     "example3": "cd examples/chess && node server.js"
   },
