@@ -5,10 +5,8 @@ const Koa = require('koa');
 const http = require('http');
 const socketIO = require('socket.io');
 
-const types = require('./lib/types');
-
-const actionRedirect = require('./lib/actionRedirect');
-const receiveSocket = require('./lib/receiveSocket');
+const types = require('./types');
+const socketMiddeware = require('./socketMiddeware');
 
 const __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
 
@@ -100,7 +98,6 @@ function Gwent(options){
 }
 
 Gwent.types = types;
-Gwent.actionRedirect = actionRedirect;
-Gwent.receiveSocket = receiveSocket;
+Gwent.socketMiddeware = socketMiddeware;
 
 module.exports = Gwent;

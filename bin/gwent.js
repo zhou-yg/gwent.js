@@ -1,23 +1,24 @@
 'use strict';
 
-var _regenerator = require('babel-runtime/regenerator');
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
 var _assign = require('babel-runtime/core-js/object/assign');
 
 var _assign2 = _interopRequireDefault(_assign);
 
+var _set = require('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var shortid = require('shortid');
+var chalk = require('chalk');
+// const koaIO = require('koa.io');
+var Koa = require('koa');
+var http = require('http');
+var socketIO = require('socket.io');
 
-var koaIO = require('koa.io');
-
-var types = require('./lib/types');
-
-var actionRedirect = require('./lib/actionRedirect');
-var receiveSocket = require('./lib/receiveSocket');
+var types = require('./types');
+var socketMiddeware = require('./socketMiddeware');
 
 var __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
 
@@ -51,90 +52,62 @@ function Gwent(options) {
   var onConnect = options.onConnect || function () {};
   var onDisconnect = options.onDisconnect || function () {};
 
-  var app = koaIO();
+  var app = new Koa();
+  var server = http.createServer(app.callback());
+  var io = socketIO(server);
 
-  app.io.use(_regenerator2.default.mark(function _callee(next) {
+  var ioConnectionSet = new _set2.default();
+
+  io.on('connection', function (socket) {
     var _this = this;
 
-    var i, unSubscribe;
-    return _regenerator2.default.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _context.prev = 0;
+    var store = addSocketAction(createStore(socket));
+    socket.store = store;
 
-            this.store = addSocketAction(createStore(this.socket));
+    onConnect.call(socket, socket);
 
-            onConnect.call(this);
+    var unSubscribe = store.subscribe(function () {
+      if (store[__SOCKET_ROUTE_ACTION]) {
 
-            i = 0;
-            unSubscribe = this.store.subscribe(function () {
+        console.log('server getState:', _this.socket.id);
+        console.log('lastAction:', store[__SOCKET_ROUTE_ACTION]);
 
-              if (_this.store[__SOCKET_ROUTE_ACTION]) {
+        var action = (0, _assign2.default)({
+          i: i++,
+          isSelf: true
+        }, store[__SOCKET_ROUTE_ACTION]);
 
-                console.log('server getState:', _this.socket.id);
-                console.log('lastAction:', _this.store[__SOCKET_ROUTE_ACTION]);
+        socket.emit(types.SOCKET_ROUTE, action);
 
-                var action = (0, _assign2.default)({
-                  i: i++,
-                  isSelf: true
-                }, _this.store[__SOCKET_ROUTE_ACTION]);
-
-                _this.emit(types.SOCKET_ROUTE, action);
-
-                _this.store[__SOCKET_ROUTE_ACTION] = null;
-              }
-            });
-            _context.next = 7;
-            return next;
-
-          case 7:
-
-            onDisconnect.call(this);
-
-            unSubscribe();
-
-            _context.next = 14;
-            break;
-
-          case 11:
-            _context.prev = 11;
-            _context.t0 = _context['catch'](0);
-
-            console.log('error:', _context.t0);
-
-          case 14:
-          case 'end':
-            return _context.stop();
-        }
+        store[__SOCKET_ROUTE_ACTION] = null;
       }
-    }, _callee, this, [[0, 11]]);
-  }));
+    });
 
-  app.io.route(types.SOCKET_ROUTE, _regenerator2.default.mark(function _callee2(next, action) {
-    return _regenerator2.default.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
+    socket.on(types.SOCKET_ROUTE, function (action) {
 
-            action.from = 'by default route';
-            action.isSelf = true;
+      action.from = 'by default route';
+      action.isSelf = true;
 
-            this.store.socketDispatch(action);
+      store.socketDispatch(action);
+    });
 
-          case 3:
-          case 'end':
-            return _context2.stop();
-        }
-      }
-    }, _callee2, this);
-  }));
+    socket.on('disconnect', function (reasonMessage) {
+
+      onDisconnect.call(socket, socket);
+      unSubscribe();
+    });
+  });
+
+  app.listen = function () {
+    return server.listen.apply(server, arguments);
+  };
+
+  app.io = io;
 
   return app;
 }
 
 Gwent.types = types;
-Gwent.actionRedirect = actionRedirect;
-Gwent.receiveSocket = receiveSocket;
+Gwent.socketMiddeware = socketMiddeware;
 
 module.exports = Gwent;
