@@ -4,14 +4,17 @@
 const types = require('./types');
 
 
-module.exports = (socket) => store => next => {
+module.exports = (socket, isBrowser) => store => next => {
 
-  socket.on(types.SOCKET_ROUTE,(action)=>{
-
-    next(action);
-  });
+  if(isBrowser){
+    socket.on(types.SOCKET_ROUTE,(action)=>{
+      next(action);
+    });
+  }
 
  return action => {
+
+   console.log(`action:`, action);
 
    if(action.from === types.BROWSER_TAG){
      //....send to server

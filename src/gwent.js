@@ -6,7 +6,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const types = require('./types');
-const socketMiddeware = require('./socketMiddeware');
+const socketMiddleware = require('./socketMiddleware');
 
 const __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
 
@@ -75,6 +75,8 @@ function Gwent(options){
 
     socket.on(types.SOCKET_ROUTE, function (action){
 
+      console.log(`socket route`);
+
       action.from = 'by default route';
       action.isSelf = true;
 
@@ -88,6 +90,7 @@ function Gwent(options){
     });
   });
 
+
   app.listen = function () {
     return server.listen.apply(server, arguments);
   }
@@ -98,6 +101,6 @@ function Gwent(options){
 }
 
 Gwent.types = types;
-Gwent.socketMiddeware = socketMiddeware;
+Gwent.socketMiddleware = socketMiddleware;
 
 module.exports = Gwent;

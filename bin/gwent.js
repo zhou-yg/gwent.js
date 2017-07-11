@@ -1,15 +1,5 @@
 'use strict';
 
-var _assign = require('babel-runtime/core-js/object/assign');
-
-var _assign2 = _interopRequireDefault(_assign);
-
-var _set = require('babel-runtime/core-js/set');
-
-var _set2 = _interopRequireDefault(_set);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var shortid = require('shortid');
 var chalk = require('chalk');
 // const koaIO = require('koa.io');
@@ -18,7 +8,7 @@ var http = require('http');
 var socketIO = require('socket.io');
 
 var types = require('./types');
-var socketMiddeware = require('./socketMiddeware');
+var socketMiddleware = require('./socketMiddleware');
 
 var __SOCKET_ROUTE_ACTION = '__SOCKET_ROUTE_ACTION';
 
@@ -56,7 +46,7 @@ function Gwent(options) {
   var server = http.createServer(app.callback());
   var io = socketIO(server);
 
-  var ioConnectionSet = new _set2.default();
+  var ioConnectionSet = new Set();
 
   io.on('connection', function (socket) {
     var _this = this;
@@ -72,7 +62,7 @@ function Gwent(options) {
         console.log('server getState:', _this.socket.id);
         console.log('lastAction:', store[__SOCKET_ROUTE_ACTION]);
 
-        var action = (0, _assign2.default)({
+        var action = Object.assign({
           i: i++,
           isSelf: true
         }, store[__SOCKET_ROUTE_ACTION]);
@@ -84,6 +74,8 @@ function Gwent(options) {
     });
 
     socket.on(types.SOCKET_ROUTE, function (action) {
+
+      console.log('socket route');
 
       action.from = 'by default route';
       action.isSelf = true;
@@ -108,6 +100,6 @@ function Gwent(options) {
 }
 
 Gwent.types = types;
-Gwent.socketMiddeware = socketMiddeware;
+Gwent.socketMiddleware = socketMiddleware;
 
 module.exports = Gwent;

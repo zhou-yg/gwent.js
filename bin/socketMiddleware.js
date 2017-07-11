@@ -5,16 +5,19 @@
 */
 var types = require('./types');
 
-module.exports = function (socket) {
+module.exports = function (socket, isBrowser) {
   return function (store) {
     return function (next) {
 
-      socket.on(types.SOCKET_ROUTE, function (action) {
-
-        next(action);
-      });
+      if (isBrowser) {
+        socket.on(types.SOCKET_ROUTE, function (action) {
+          next(action);
+        });
+      }
 
       return function (action) {
+
+        console.log('action:', action);
 
         if (action.from === types.BROWSER_TAG) {
           //....send to server
