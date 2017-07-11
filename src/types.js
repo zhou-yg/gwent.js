@@ -3,8 +3,6 @@
  */
 const SERVER_TAG ='server';
 const BROWSER_TAG = 'browser';
-
-
 const SOCKET_ROUTE = 'store';
 
 module.exports = {
