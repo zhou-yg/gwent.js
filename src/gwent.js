@@ -18,6 +18,7 @@ if(isNaN(workId)){
 
 shortid.worker(workId);
 
+var i = 0;
 
 function addSocketAction(store){
 
@@ -52,12 +53,16 @@ function Gwent(options){
     const store = addSocketAction(createStore(socket));
     socket.store = store;
 
+    routeEvents.forEach(eventArguments => {
+      socket.on.apply(socket, eventArguments);
+    });
+
     onConnect.call(socket, socket);
 
     const unSubscribe = store.subscribe(() => {
       if(store[__SOCKET_ROUTE_ACTION]) {
 
-        console.log('server getState:', this.socket.id);
+        console.log('server getState:', this.id);
         console.log('lastAction:', store[__SOCKET_ROUTE_ACTION]);
 
         const action = Object.assign({
@@ -71,7 +76,6 @@ function Gwent(options){
         store[__SOCKET_ROUTE_ACTION] = null;
       }
     });
-
 
     socket.on(types.SOCKET_ROUTE, function (action){
 
@@ -96,6 +100,14 @@ function Gwent(options){
   }
 
   app.io = io;
+
+  const routeEvents = [];
+
+  app.io.route = function () {
+    var arg = arguments;
+
+    routeEvents.push(arg);
+  }
 
   return app;
 }
